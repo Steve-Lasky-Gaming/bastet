@@ -1,24 +1,31 @@
 import pygame
 
-WALL_COLOR = (153, 125, 14)
-PLAT_COLOR = (227, 50, 50)
+SCREEN_WIDTH, SCREEN_HEIGHT = 720, 480
+SCREEN_COLOR = (162, 103, 105)
+WALL_COLOR = (213, 185, 178)
+PLAT_COLOR = (109, 46, 70)
+
+GROUND_LEVEL = 128
+WALL_WIDTH = 64
 
 LEVEL_OBJECTS = {
+    # object_name, (width, height), (x_pos, y_pos)
     "walls" : (
-        ( (0, 50), (20, 40) ),
-        ( (70, 50), (25, 20) ),
-        ( (105, 70), (25, 20) )
+        ( "left_wall", (WALL_WIDTH, SCREEN_HEIGHT - GROUND_LEVEL), (0, GROUND_LEVEL) ),
+        ( "center_wall", (WALL_WIDTH, SCREEN_HEIGHT - GROUND_LEVEL), ((SCREEN_WIDTH - 2 * WALL_WIDTH)  / 2, GROUND_LEVEL) ),
+        ( "right_wall", (WALL_WIDTH, SCREEN_HEIGHT - GROUND_LEVEL), (SCREEN_WIDTH - WALL_WIDTH, GROUND_LEVEL) )
     ),
     "plats" : (
-        ((40, 50), (10, 2)),
-        ((95, 50), (10, 2))
+        ("left_plat", (64, 64), (0.25 * SCREEN_WIDTH, GROUND_LEVEL + 128)),
+        ("right_plat", (64, 64), (0.75 * SCREEN_WIDTH, GROUND_LEVEL + 128))
     )
 }
 
 class LevelObject:
 
-    def __init__(self, size_tuple = (0, 0), position_tuple = (0, 0), rgb_tuple = (0, 0, 0)): 
+    def __init__(self, obj_name, size_tuple = (0, 0), position_tuple = (0, 0), rgb_tuple = (0, 0, 0)): 
 
+        self._name = obj_name
         self._width, self._height = size_tuple
         self._x, self._y = position_tuple
         self._red, self._green, self._blue = rgb_tuple

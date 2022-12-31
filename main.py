@@ -3,10 +3,9 @@ import sys
 import threading
 import time
 
-from level import get_level_objects
+from level import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_COLOR, get_level_objects
 
-SCREEN_COLOR = (50, 35, 20)
-DISPLAY_SIZE = (720, 540)
+
 
 def render_thread_proc(level_objects, screen, render_lock, shutdown):
     while not shutdown:
@@ -25,7 +24,7 @@ if __name__ == "__main__":
     shutdown = False
 
     pygame.init()
-    screen = pygame.display.set_mode(DISPLAY_SIZE)
+    screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
     level_objects = get_level_objects()
 
     render_thread = threading.Thread(target = lambda : render_thread_proc(level_objects, screen, render_lock, shutdown))
