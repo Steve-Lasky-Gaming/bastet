@@ -1,55 +1,34 @@
-#!/usr/bin/env python3
-
 import pygame
 import sys
 import threading
 import time
 
-level_data = {
-    "width" : 200,
-    "height" : 100,
-    "objects" :
-        [
-            {"type" : "wall",  "x" :   0, "y" : 50, "w" : 20, "h" : 40},
-            {"type" : "hplat", "x" :  40, "y" : 50, "w" : 10, "h" :  2},
-            {"type" : "wall",  "x" :  70, "y" : 50, "w" : 25, "h" : 20},
-            {"type" : "vplat", "x" :  95, "y" : 50, "w" : 10, "h" :  2},
-            {"type" : "wall",  "x" : 105, "y" : 70, "w" : 25, "h" : 20},
-        ]
-}
+from level import get_level_objects
 
-render_lock = threading.Lock()
-shutdown = False
+SCREEN_COLOR = (50, 35, 20)
+DISPLAY_SIZE = (720, 540)
 
-screen = None
-
-def render_thread_proc():
+def render_thread_proc(level_objects, screen, render_lock, shutdown):
     while not shutdown:
-        screen.fill(pygame.Color(50, 35, 20))
-
+        screen.fill(SCREEN_COLOR)
         with render_lock:
-            # everything is a box for the moment
-            for obj in level_data["objects"]:
-                if obj["type"] == "wall":
-                    pygame.draw.rect(screen, pygame.Color(153, 125, 14),
-                            pygame.Rect(obj["x"], obj["y"], obj["w"], obj["h"]))
-                elif obj["type"] == "hplat":
-                    pygame.draw.rect(screen, pygame.Color(227, 50, 50),
-                            pygame.Rect(obj["x"], obj["y"], obj["w"], obj["h"]))
-                elif obj["type"] == "vplat":
-                    pygame.draw.rect(screen, pygame.Color(78, 176, 245),
-                            pygame.Rect(obj["x"], obj["y"], obj["w"], obj["h"]))
+            for obj in level_objects:
+                obj.draw(screen)
 
         pygame.display.flip()
 
-def main():
-    global screen
-    global shutdown
+
+if __name__ == "__main__":
+
+    screen = None
+    render_lock = threading.Lock()
+    shutdown = False
 
     pygame.init()
-    screen = pygame.display.set_mode((320, 240))
+    screen = pygame.display.set_mode(DISPLAY_SIZE)
+    level_objects = get_level_objects()
 
-    render_thread = threading.Thread(target=render_thread_proc)
+    render_thread = threading.Thread(target = lambda : render_thread_proc(level_objects, screen, render_lock, shutdown))
     render_thread.start()
 
     while True:
@@ -61,4 +40,3 @@ def main():
                 sys.exit(0)
         time.sleep(1./60)
 
-main()
